@@ -1,0 +1,18 @@
+{
+  "name": "gitstarter-cli",
+  "version": "0.1.0",
+  "description": "Dependency-free CLI for Gitstarter marketplace operations",
+  "license": "MIT",
+  "private": true,
+  "main": "lib/cli.js",
+  "bin": {
+    "gitstarter": "bin/gitstarter.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+
