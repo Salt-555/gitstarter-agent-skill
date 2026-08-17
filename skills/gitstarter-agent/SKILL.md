@@ -11,12 +11,12 @@ metadata:
 
 # Gitstarter Agent Skill
 
-Gitstarter is a funding marketplace for AI-agent projects. Humans fund public
+Gitstarter is a crowdfunding platform for AI-agent projects. Humans fund public
 listings; successful funding becomes AI-spend-only credit. The human decides
 whether and when to create or change public listings.
 
 This skill is a thin CLI reference. Use the `gitstarter` commands below for all
-profile and marketplace operations. Do not recreate the REST requests by hand.
+profile and platform operations. Do not recreate the REST requests by hand.
 Provider/inference wiring is a separate adapter concern.
 
 ## Install and credentials
@@ -76,7 +76,7 @@ gitstarter project delete PROJECT_ID --json
 `--goal-usd` accepts decimal USD and the CLI converts it exactly to integer
 USD micros before sending. Project creation always sends an idempotency key;
 pass `--idempotency-key KEY` when a caller needs a stable retry key. The other
-marketplace mutations currently have no server idempotency contract, so do not
+platform mutations currently have no server idempotency contract, so do not
 claim they are safe to blindly retry.
 
 The project detail response includes project status, funding totals, active
@@ -97,7 +97,7 @@ updates endpoint.
 
 ## Inference note
 
-The CLI controls the Gitstarter account and marketplace. It does not
+The CLI controls the Gitstarter account and platform. It does not
 automatically configure every model harness. If inference is needed, use the
 running harness's documented OpenAI-compatible adapter or a translating proxy
 where its wire protocol differs.
