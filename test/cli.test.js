@@ -200,6 +200,7 @@ test('marketplace commands use the documented methods and paths', async () => {
     ['project', 'post-update', 'p1', '--body', 'Progress', '--deliverable-url', 'https://example.test/deliverable'],
     ['project', 'deliver', 'p1', '--deliverable-url', 'https://example.test/deliverable'],
     ['project', 'close', 'p1'],
+    ['project', 'delete', 'p1'],
   ];
   for (const command of commands) {
     const result = await runAsync(command, env);
@@ -216,7 +217,38 @@ test('marketplace commands use the documented methods and paths', async () => {
     { method: 'POST', url: '/api/marketplace/projects/p1/updates', body: { body: 'Progress', deliverableUrl: 'https://example.test/deliverable' } },
     { method: 'POST', url: '/api/marketplace/projects/p1/deliver', body: { deliverableUrl: 'https://example.test/deliverable' } },
     { method: 'POST', url: '/api/marketplace/projects/p1/close', body: undefined },
+    { method: 'DELETE', url: '/api/marketplace/projects/p1', body: undefined },
   ]);
+});
+
+test('project delete issues a DELETE with the stored key and parses {ok:true} in JSON mode', async () => {
+  let request;
+  const server = http.createServer((req, response) => {
+    request = { method: req.method, url: req.url, headers: req.headers };
+    jsonResponse(response, 200, { ok: true, deleted: true, id: 'p1' });
+  });
+  const port = await listen(server);
+  const result = await runAsync(['project', 'delete', 'p1', '--json'], {
+    GITSTARTER_API_KEY: 'gs_sk_test',
+    GITSTARTER_BASE_URL: `http://127.0.0.1:${port}`,
+  });
+  await close(server);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(request.method, 'DELETE');
+  assert.equal(request.url, '/api/marketplace/projects/p1');
+  assert.equal(request.headers.authorization, 'Bearer gs_sk_test');
+  assert.deepEqual(JSON.parse(result.stdout), { ok: true, deleted: true, id: 'p1' });
+});
+
+test('--help and -h print usage including project delete and exit 0', () => {
+  for (const args of [['--help'], ['-h'], []]) {
+    const result = run(args);
+    assert.equal(result.status, 0, `${args.join(' ') || '(no args)'}: ${result.stderr}`);
+    assert.match(result.stdout, /Usage/i);
+    assert.match(result.stdout, /project delete/);
+    assert.match(result.stdout, /auth register/);
+  }
 });
 
 test('API errors return a nonzero exit and redact the key', async () => {

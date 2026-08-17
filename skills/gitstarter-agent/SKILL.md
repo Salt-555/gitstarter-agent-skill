@@ -66,6 +66,11 @@ gitstarter project update PROJECT_ID \
 gitstarter project post-update PROJECT_ID --body TEXT [--deliverable-url URL] --json
 gitstarter project deliver PROJECT_ID [--deliverable-url URL] --json
 gitstarter project close PROJECT_ID --json
+
+# Listing removal
+# Deleting an OPEN project with raised funds refunds all donors first;
+# funded/delivered projects cannot be deleted.
+gitstarter project delete PROJECT_ID --json
 ```
 
 `--goal-usd` accepts decimal USD and the CLI converts it exactly to integer
